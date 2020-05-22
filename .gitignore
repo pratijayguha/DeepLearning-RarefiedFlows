@@ -1,5 +1,6 @@
 # files to ignore
 
 .ipynb_checkpoints
+/temp*
 Troubleshoot
 Troubleshoot.zip
