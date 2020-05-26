@@ -33,7 +33,7 @@ def make_dir(path): # Function to make adirectory to save files in
         else: return count
     else: return -1*count
 
-def get_APE(pred,y_true): # Function to return an array with APE of eaaaah prediction 
+def get_APE(pred,y_true): # Function to return an array with APE of each prediction 
     APE = np.zeros(y_true.shape[0])
     for i in range(y_true.shape[0]):
         APE[i] = abs((pred[i] - y_true[i]) / y_true[i])
@@ -199,15 +199,13 @@ for i in range(len(opti_list)):
                 IndVal_layer.append(Dense(node, name='IndVal_Final_layer', activation='linear')(IndVal_layer[i-1])) 
             else:# For intermediate layers
                 IndVal_layer.append(Dense(node, name='IndVal_layer%d' %(i+1), activation='relu')(IndVal_layer[i-1]))
-    	# Multiply both layers to get final output.            
-        # Multiplication_layer = Multiply(name='Multiplication_layer')([IndVal_layer[len(IndVal_layer)-1], MaxVal_layer[len(MaxVal_layer)-1]])
         # Building the model with all connections
         model = Model(inputs= [Input_layer], outputs= [IndVal_layer[len(IndVal_layer)-1], MaxVal_layer[len(MaxVal_layer)-1]])
         return model
     # Calling the model
     model = build_model(MaxVal_archi,IndVal_archi)
     # A visual flowchart of the model.
-    keras.utils.plot_model(model, "Architecture_SN.png", show_shapes=True)
+    keras.utils.plot_model(model, "SNwithoutMult.png", show_shapes=True)
 
     # Define early stopping callback
     early_stopping_callback = EarlyStopping(monitor='val_MaxVal_Final_layer_mape', 
