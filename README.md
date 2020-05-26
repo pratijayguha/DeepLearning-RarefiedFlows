@@ -6,6 +6,8 @@ This is a project that investigates an efficient learning methods for deep learn
 
 **MaxVal:** This is the model that handles the maximum values of Mach Number in each L/D Ratio.
 
-**/temp_models/SiameseModel2** is a temporary model being used for evaluation with a Multiplication Layer added in for training. A Multiplication layer without training will also be attempted.
+**SNwithMult** is a model being used for optimizer evaluation with a Multiplication Layer added in for training.
 
-**/temp_models/SiameseModel3** is a temporary evaluation model without the Multiplication layer included for training. We aim to see which of these are a more effective fit for our problem statement.
+**SNwithoutMult** is a model without the Multiplication layer included being used for optimizer evaluation. We aim to see which of these are a more effective fit for our problem statement.
+
+For Results please look at the plots in /PostProc/SN*
