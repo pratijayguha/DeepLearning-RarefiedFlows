@@ -11,3 +11,5 @@ This is a project that investigates an efficient learning methods for deep learn
 **SNwithoutMult** is a model without the Multiplication layer included being used for optimizer evaluation. We aim to see which of these are a more effective fit for our problem statement.
 
 For Results please look at the plots in /PostProc/SN*
+
+**Note:** Prefix Opti signifies that the file was used to evaluate optimizers. 
