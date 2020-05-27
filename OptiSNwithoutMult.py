@@ -54,8 +54,8 @@ num_epochs = 2000000
 
 
 # Filepaths for saving Model and PostProcessed data:
-save_post_dir = 'PostProc//SNwithoutMult/OptiStudies/'
-save_model_dir = 'SavedModels/SNwithoutMult/OptiStudies/'
+save_post_dir = 'PostProc//SNwithoutMult/OptiStudies/val_IndVal_ES/'
+save_model_dir = 'SavedModels/SNwithoutMult/OptiStudies/val_IndVal_ES/'
 
 # Reading data from .csv file
 data_dat = pd.read_csv (r'data.csv')
@@ -208,7 +208,7 @@ for i in range(len(opti_list)):
     keras.utils.plot_model(model, "SNwithoutMult.png", show_shapes=True)
 
     # Define early stopping callback
-    early_stopping_callback = EarlyStopping(monitor='val_MaxVal_Final_layer_mape', 
+    early_stopping_callback = EarlyStopping(monitor='val_IndVal_Final_layer_mape', 
                                             patience=500,
                                             min_delta= 1e-4,
                                             restore_best_weights=True,
@@ -219,7 +219,7 @@ for i in range(len(opti_list)):
     # Train the model
     history = model.fit(X_train,
                         (y_train_comb[:,0], y_train_comb[:,1]),
-                        batch_size = 32,
+                        batch_size = 2,
                         epochs=200000,
                         verbose=True,
                         validation_data=(X_test, (y_test_comb[:,0], y_test_comb[:,1])),
