@@ -54,8 +54,8 @@ num_epochs = 2000000
 
 
 # Filepaths for saving Model and PostProcessed data:
-save_post_dir = 'PostProc//SNwithoutMult/OptiStudies/val_IndVal_ES/'
-save_model_dir = 'SavedModels/SNwithoutMult/OptiStudies/val_IndVal_ES/'
+save_post_dir = 'PostProc/SNwithoutMult/OptiStudies/val_IndVal_ES'
+save_model_dir = 'SavedModels/SNwithoutMult/OptiStudies/val_IndVal_ES'
 
 # Reading data from .csv file
 data_dat = pd.read_csv (r'data.csv')
@@ -154,8 +154,14 @@ def load_optimizers(): # Function to load all optimizers
     SGD = tf.keras.optimizers.SGD(learning_rate=0.01)
     Nadam = tf.keras.optimizers.Nadam(learning_rate=0.002, beta_1=0.9, beta_2=0.999)
 
-    opti_list = [RMSprop, Adadelta, Adagrad, SGD_NM, SGD, Adam, Nadam]
-    opti_name_list = ["RMSprop", "Adadelta", "Adagrad", "SGD_NM", "SGD", "Adam", "Nadam"]
+
+    opti_list = [Adam]
+    opti_name_list = ["Adam"]
+
+
+    # opti_list = [RMSprop, Adadelta, Adagrad, SGD_NM, SGD, Adam, Nadam]
+    # opti_name_list = ["RMSprop", "Adadelta", "Adagrad", "SGD_NM", "SGD", "Adam", "Nadam"]
+
     return opti_list, opti_name_list
 
 opti_list, opti_name_list = load_optimizers()
