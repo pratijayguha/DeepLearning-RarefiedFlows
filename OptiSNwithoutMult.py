@@ -54,8 +54,8 @@ num_epochs = 2000000
 
 
 # Filepaths for saving Model and PostProcessed data:
-save_post_dir = 'PostProc/SNwithoutMult/OptiStudies/val_IndVal_ES'
-save_model_dir = 'SavedModels/SNwithoutMult/OptiStudies/val_IndVal_ES'
+save_post_dir = 'PostProc/MaNumber/SNwithoutMult/OptiStudies/val_IndVal_ES/'
+save_model_dir = 'SavedModels/MaNumber/SNwithoutMult/OptiStudies/val_IndVal_ES/'
 
 # Reading data from .csv file
 data_dat = pd.read_csv (r'data.csv')
@@ -149,7 +149,7 @@ def load_optimizers(): # Function to load all optimizers
                                             rho=0.95, epsilon=1e-07)
     RMSprop = tf.keras.optimizers.RMSprop(learning_rate=0.001, rho=0.9)
     Adagrad = tf.keras.optimizers.Adagrad(learning_rate=0.01)
-    Adam = tf.keras.optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, amsgrad=False)
+    Adam = tf.keras.optimizers.Adam(learning_rate=0.0005, beta_1=0.9, beta_2=0.999, amsgrad=False)
     SGD_NM = tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.5, nesterov=True)
     SGD = tf.keras.optimizers.SGD(learning_rate=0.01)
     Nadam = tf.keras.optimizers.Nadam(learning_rate=0.002, beta_1=0.9, beta_2=0.999)
@@ -170,141 +170,170 @@ for i in range(len(opti_list)):
     opti = opti_list[i]
     opti_name = opti_name_list[i]
 
-    # Define save directory for individual optimizers
-    save_model_path = save_model_dir+'model_'+opti_name
+    # # Define save directory for individual optimizers
+    # save_model_path = save_model_dir+'model_'+opti_name
 
-    # Architecture for the Siamese Network
-    MaxVal_archi = [5,5,5,5,5,5,5,5,5,5,5,5,1]
-    IndVal_archi = [20,20,20,20,20,20,20,20,20,20,20,20,1]
+    # # Architecture for the Siamese Network
+    # MaxVal_archi = [5,5,5,5,5,5,5,5,5,5,5,5,1]
+    # IndVal_archi = [20,20,20,20,20,20,20,20,20,20,20,20,1]
 
-    def get_LD(x): # Function to separate L/D Ratio for the Lambda Layer.
-        x_new = x[:,1]
-        return x_new[:,np.newaxis]
+    # def get_LD(x): # Function to separate L/D Ratio for the Lambda Layer.
+    #     x_new = x[:,1]
+    #     return x_new[:,np.newaxis]
 
-    # Define a function to build a SN
-    def build_model(MaxVal_archi, IndVal_archi):
+    # # Define a function to build a SN
+    # def build_model(MaxVal_archi, IndVal_archi):
 
-        Input_layer = Input(shape=[2,], name='Input')
-        # Lambda layer to separately use it as only L/D ratio input for a fork in Network.
-        MaxVal_input = Lambda(get_LD, name='MaxVal_input', output_shape=(1,))(Input_layer)
-    	# Defining the MaxVal fork of SN    
-        MaxVal_layer = []
-        for i,node in enumerate(MaxVal_archi):
-            if i==0: # First layer in MaxVal fork
-                MaxVal_layer.append(Dense(node, name='MaxVal_layer%d' %(i+1), activation='relu')(MaxVal_input))
-            elif i==len(MaxVal_archi)-1: # Last layer in MaxVal fork. *Activation must be linear*
-                MaxVal_layer.append(Dense(node, name='MaxVal_Final_layer', activation='linear')(MaxVal_layer[i-1]))
-            else: # For intermediate layers
-                MaxVal_layer.append(Dense(node, name='MaxVal_layer%d' %(i+1), activation='relu')(MaxVal_layer[i-1]))
-        # Defining the IndVal fork of Neural Network
-        IndVal_layer = []
-        for i, node in enumerate(IndVal_archi):
-            if i==0: # First layer in MaxVal fork
-                IndVal_layer.append(Dense(node, name='IndVal_layer%d' %(i+1), activation='relu')(Input_layer))
-            elif i==len(IndVal_archi)-1: # Last layer in MaxVal fork. *Activation must be linear*
-                IndVal_layer.append(Dense(node, name='IndVal_Final_layer', activation='linear')(IndVal_layer[i-1])) 
-            else:# For intermediate layers
-                IndVal_layer.append(Dense(node, name='IndVal_layer%d' %(i+1), activation='relu')(IndVal_layer[i-1]))
-        # Building the model with all connections
-        model = Model(inputs= [Input_layer], outputs= [IndVal_layer[len(IndVal_layer)-1], MaxVal_layer[len(MaxVal_layer)-1]])
-        return model
-    # Calling the model
-    model = build_model(MaxVal_archi,IndVal_archi)
-    # A visual flowchart of the model.
-    keras.utils.plot_model(model, "SNwithoutMult.png", show_shapes=True)
+    #     Input_layer = Input(shape=[2,], name='Input')
+    #     # Lambda layer to separately use it as only L/D ratio input for a fork in Network.
+    #     MaxVal_input = Lambda(get_LD, name='MaxVal_input', output_shape=(1,))(Input_layer)
+    # 	# Defining the MaxVal fork of SN    
+    #     MaxVal_layer = []
+    #     for i,node in enumerate(MaxVal_archi):
+    #         if i==0: # First layer in MaxVal fork
+    #             MaxVal_layer.append(Dense(node, name='MaxVal_layer%d' %(i+1), activation='relu')(MaxVal_input))
+    #         elif i==len(MaxVal_archi)-1: # Last layer in MaxVal fork. *Activation must be linear*
+    #             MaxVal_layer.append(Dense(node, name='MaxVal_Final_layer', activation='linear')(MaxVal_layer[i-1]))
+    #         else: # For intermediate layers
+    #             MaxVal_layer.append(Dense(node, name='MaxVal_layer%d' %(i+1), activation='relu')(MaxVal_layer[i-1]))
+    #     # Defining the IndVal fork of Neural Network
+    #     IndVal_layer = []
+    #     for i, node in enumerate(IndVal_archi):
+    #         if i==0: # First layer in MaxVal fork
+    #             IndVal_layer.append(Dense(node, name='IndVal_layer%d' %(i+1), activation='relu')(Input_layer))
+    #         elif i==len(IndVal_archi)-1: # Last layer in MaxVal fork. *Activation must be linear*
+    #             IndVal_layer.append(Dense(node, name='IndVal_Final_layer', activation='linear')(IndVal_layer[i-1])) 
+    #         else:# For intermediate layers
+    #             IndVal_layer.append(Dense(node, name='IndVal_layer%d' %(i+1), activation='relu')(IndVal_layer[i-1]))
+    #     # Building the model with all connections
+    #     model = Model(inputs= [Input_layer], outputs= [IndVal_layer[len(IndVal_layer)-1], MaxVal_layer[len(MaxVal_layer)-1]])
+    #     return model
+    # # Calling the model
+    # model = build_model(MaxVal_archi,IndVal_archi)
+    # # A visual flowchart of the model.
+    # keras.utils.plot_model(model, "SNwithoutMult.png", show_shapes=True)
 
-    # Define early stopping callback
-    early_stopping_callback = EarlyStopping(monitor='val_IndVal_Final_layer_mape', 
-                                            patience=500,
-                                            min_delta= 1e-4,
-                                            restore_best_weights=True,
-                                            mode='auto',
-                                            verbose=True)
-    # Compile the model
-    model.compile(loss='mse', optimizer='Adam', metrics=['mape'])
-    # Train the model
-    history = model.fit(X_train,
-                        (y_train_comb[:,0], y_train_comb[:,1]),
-                        batch_size = 2,
-                        epochs=200000,
-                        verbose=True,
-                        validation_data=(X_test, (y_test_comb[:,0], y_test_comb[:,1])),
-                        callbacks=[early_stopping_callback])
-    # Save the best version of the model.
-    model.save(save_model_dir+'model_'+opti_name)
-    # write  model training metrics to a dataframe
-    model_data = pd.DataFrame(history.history)
-    model_data.head()
-    # Subplot for Plotting training metrics
-    nrows = 2
-    ncols = 2 
-    # Initialise the plot
-    fig1 = plt.figure()
-    fig, axes = plt.subplots(nrows, ncols)
-    fig.set_size_inches(16,8)
-    # Plot loss in [0,0]
-    loss_plot=model_data.plot(y="IndVal_Final_layer_loss", color='blue', label="YNorm", ax=axes[0,0])
-    loss_plot=model_data.plot(y="MaxVal_Final_layer_loss", color='green', label="YMax", ax=axes[0,0])
-    loss_plot.set(xlabel="Epochs", ylabel="Loss")
-    loss_plot.set_title("Loss vs Epochs")
-    loss_plot.legend(loc="upper right")
-    # Plot MAPE in [0,1]
-    mape_plot=model_data.plot(y="IndVal_Final_layer_mape", color='blue', label="YNorm", ax=axes[0,1])
-    mape_plot=model_data.plot(y="MaxVal_Final_layer_mape", color='green', label="YMax", ax=axes[0,1])
-    mape_plot.set(xlabel="Epochs", ylabel="MAPE")
-    mape_plot.set_title("MAPE vs Epochs")
-    mape_plot.legend(loc="upper right")
-    # Plot val_loss in [1,0]
-    val_loss_plot=model_data.plot(y="val_IndVal_Final_layer_loss", color='blue', label="YNorm", ax=axes[1,0])
-    val_loss_plot=model_data.plot(y="val_MaxVal_Final_layer_loss", color='green', label="YMax", ax=axes[1,0])
-    val_loss_plot.set(xlabel="Epochs", ylabel="Loss")
-    val_loss_plot.set_title("Loss vs Epochs")
-    val_loss_plot.legend(loc="upper right")
-    # Plot val_MAPE in [1,1]
-    val_mape_plot=model_data.plot(y="val_IndVal_Final_layer_mape", color='blue', label="YNorm", ax=axes[1,1])
-    val_mape_plot=model_data.plot(y="val_MaxVal_Final_layer_mape", color='green', label="YMax", ax=axes[1,1])
-    val_mape_plot.set(xlabel="Epochs", ylabel="val_MAPE")
-    val_mape_plot.set_title("Validation MAPE vs Epochs")
-    val_mape_plot.legend(loc="upper right")
-    # Subplot properties
-    plt.suptitle("%s Optimizer " %(opti_name)) # Subplot title
-    plt.subplots_adjust(wspace=0.25, hspace=0.8) # Spacing details
-    plt.savefig(save_post_dir + '%s_stats.png' %(opti_name), dpi=500)
-    # plt.show(fig1)
-    plt.close(fig1)
+    # # Define early stopping callback
+    # early_stopping_callback = EarlyStopping(monitor='val_IndVal_Final_layer_mape', 
+    #                                         patience=500,
+    #                                         min_delta= 1e-4,
+    #                                         restore_best_weights=True,
+    #                                         mode='auto',
+    #                                         verbose=True)
+    # # Compile the model
+    # model.compile(loss='mse', optimizer=Adam, metrics=['mape'])
+    # # Train the model
+    # history = model.fit(X_train,
+    #                     (y_train_comb[:,0], y_train_comb[:,1]),
+    #                     batch_size = 2,
+    #                     epochs=200000,
+    #                     verbose=True,
+    #                     validation_data=(X_test, (y_test_comb[:,0], y_test_comb[:,1])),
+    #                     callbacks=[early_stopping_callback])
+    # # Save the best version of the model.
+    # model.save(save_model_dir+'model_'+opti_name)
+    model = load_model(save_model_dir+'/model_'+opti_name)
+
+    # model_data = pd.DataFrame(history.history)
+    # model_data.head()
+    # # Subplot for Plotting training metrics
+    # nrows = 2
+    # ncols = 2 
+    # # Initialise the plot
+    # fig1 = plt.figure()
+    # fig, axes = plt.subplots(nrows, ncols)
+    # fig.set_size_inches(16,8)
+    # # Plot loss in [0,0]
+    # loss_plot=model_data.plot(y="IndVal_Final_layer_loss", color='blue', label="YNorm", ax=axes[0,0])
+    # loss_plot=model_data.plot(y="MaxVal_Final_layer_loss", color='green', label="YMax", ax=axes[0,0])
+    # loss_plot.set(xlabel="Epochs", ylabel="Loss")
+    # loss_plot.set_title("Loss vs Epochs")
+    # loss_plot.legend(loc="upper right")
+    # # Plot MAPE in [0,1]
+    # mape_plot=model_data.plot(y="IndVal_Final_layer_mape", color='blue', label="YNorm", ax=axes[0,1])
+    # mape_plot=model_data.plot(y="MaxVal_Final_layer_mape", color='green', label="YMax", ax=axes[0,1])
+    # mape_plot.set(xlabel="Epochs", ylabel="MAPE")
+    # mape_plot.set_title("MAPE vs Epochs")
+    # mape_plot.legend(loc="upper right")
+    # # Plot val_loss in [1,0]
+    # val_loss_plot=model_data.plot(y="val_IndVal_Final_layer_loss", color='blue', label="YNorm", ax=axes[1,0])
+    # val_loss_plot=model_data.plot(y="val_MaxVal_Final_layer_loss", color='green', label="YMax", ax=axes[1,0])
+    # val_loss_plot.set(xlabel="Epochs", ylabel="Loss")
+    # val_loss_plot.set_title("Loss vs Epochs")
+    # val_loss_plot.legend(loc="upper right")
+    # # Plot val_MAPE in [1,1]
+    # val_mape_plot=model_data.plot(y="val_IndVal_Final_layer_mape", color='blue', label="YNorm", ax=axes[1,1])
+    # val_mape_plot=model_data.plot(y="val_MaxVal_Final_layer_mape", color='green', label="YMax", ax=axes[1,1])
+    # val_mape_plot.set(xlabel="Epochs", ylabel="val_MAPE")
+    # val_mape_plot.set_title("Validation MAPE vs Epochs")
+    # val_mape_plot.legend(loc="upper right")
+    # # Subplot properties
+    # plt.suptitle("%s Optimizer " %(opti_name)) # Subplot title
+    # plt.subplots_adjust(wspace=0.25, hspace=0.8) # Spacing details
+    # plt.savefig(save_post_dir + '%s_stats.png' %(opti_name), dpi=500)
+    # # plt.show(fig1)
+    # plt.close(fig1)
 
     # predictions of trained model
     prediction=model.predict(X_pred)
     pred = prediction[0]*prediction[1]
 
-
     # Subplot of predictions
-    nrows=int(X_pred.shape[0]/201)
+    nrows=2
+    ncols = 3
     fig3 = plt.figure()
-    fig, axes = plt.subplots(nrows)
-    fig.set_size_inches(6,39)
+    fig, axes = plt.subplots(nrows, ncols)
+    fig.subplots_adjust(wspace=0.1, hspace=0.35)
+    fig.set_size_inches(13,9)
     for j in range(nrows):
-        axes[j].plot(X_n_pred[:201],
-                      pred[j*201:(j+1)*201],
-                      'r',
-                      label='Prediction')
-        axes[j].plot(X_n_pred[j*201:(j+1)*201],
-                     y_pred[j*201:(j+1)*201],
-                     'g', label='Actual')
-        axes[j].set(xlabel="Normalised x-coordinate",
-                    ylabel="Mach Number")
-        axes[j].set_title('L/D Ratio = %.1f with %s Optimizer' %(X_pred_max[201*j], opti_name),
-                          fontsize=11)
-        axes[j].legend(loc="upper right")
-        axes[j].set_xlim((0,1))
-        axes[j].set_ylim((0,5))
-        axes[j].set_aspect(0.2)
+        for k in range(ncols):
+            axes[j,k].plot(X_n_pred[:201],
+                            pred[(3*j+k)*201:((3*j+k)+1)*201],
+                            'r',
+                            label='Prediction')
+            axes[j,k].plot(X_n_pred[:201],
+                            y_pred[(3*j+k)*201:((3*j+k)+1)*201],
+                            'g', label='Actual')
+            axes[j,k].set(xlabel="Normalised x-coordinate",
+                        ylabel="Mach Number")
+            axes[j,k].set_title('L/D Ratio = %.1f with %s Optimmizer' %(X_pred_max[201*(3*j+k)], opti_name),
+                                fontsize=11)
+            axes[j,k].legend(loc="upper right")
+            axes[j,k].set_xlim((0,1))
+            axes[j,k].set_ylim((0,5))
+            axes[j,k].set_aspect(0.2)
 
     fig = plt.gcf()
-    plt.tight_layout(pad=0.25, h_pad=1.25, w_pad=0.25, rect=None)
-    plt.savefig(save_post_dir + 'cumilative_ind_%s_predictions.png' %(opti_name), dpi=500)
+    plt.savefig(save_post_dir + 'predictions_adam.png', dpi=500)
     # plt.show(fig3)
     plt.close(fig3)
+    # # Subplot of predictions
+    # nrows=int(X_pred.shape[0]/201)
+    # fig3 = plt.figure()
+    # fig, axes = plt.subplots(nrows)
+    # fig.set_size_inches(6,39)
+    # for j in range(nrows):
+    #     axes[j].plot(X_n_pred[:201],
+    #                   pred[j*201:(j+1)*201],
+    #                   'r',
+    #                   label='Prediction')
+    #     axes[j].plot(X_n_pred[j*201:(j+1)*201],
+    #                  y_pred[j*201:(j+1)*201],
+    #                  'g', label='Actual')
+    #     axes[j].set(xlabel="Normalised x-coordinate",
+    #                 ylabel="Mach Number")
+    #     axes[j].set_title('L/D Ratio = %.1f with %s Optimizer' %(X_pred_max[201*j], opti_name),
+    #                       fontsize=11)
+    #     axes[j].legend(loc="upper right")
+    #     axes[j].set_xlim((0,1))
+    #     axes[j].set_ylim((0,5))
+    #     axes[j].set_aspect(0.2)
+
+    # fig = plt.gcf()
+    # plt.tight_layout(pad=0.25, h_pad=1.25, w_pad=0.25, rect=None)
+    # plt.savefig(save_post_dir + 'cumilative_ind_%s_predictions.png' %(opti_name), dpi=500)
+    # # plt.show(fig3)
+    # plt.close(fig3)
 
     # Get Max APE for each opti
     pred_APE = get_APE(pred, y_pred)
@@ -328,5 +357,5 @@ MAPE_df = pd.DataFrame(max_MAPE,
                        index=opti_name_list, 
                        columns=column_df)
 
-MAPE_df.to_csv(save_post_dir + 'Cumilative_max_MAPE.csv', index=True, header=True, sep=',')
+MAPE_df.to_csv(save_post_dir + 'Cumilative_max_Adam.csv', index=True, header=True, sep=',')
 
